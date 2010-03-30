@@ -12,6 +12,23 @@ namespace AppBus
             this.messageHandlerFactory = messageHandlerFactory;
         }
 
+        public new void Add(Type type)
+        {
+            if (TypeIsNotAMessageHandler(type))
+                throw ExceptionForTypesThatAreNotMessageHandlers(type);
+            base.Add(type);
+        }
+
+        private static InvalidOperationException ExceptionForTypesThatAreNotMessageHandlers(Type type)
+        {
+            return new InvalidOperationException(string.Format("Type {0} must implement the IMessageHandler interface", type.Name));
+        }
+
+        private static bool TypeIsNotAMessageHandler(Type type)
+        {
+            return type.GetInterface(typeof (IMessageHandler).Name) == null;
+        }
+
         public IEnumerable<IMessageHandler> GetHandlersForType(Type type)
         {
             foreach (var handlerType in this)
@@ -24,7 +41,7 @@ namespace AppBus
 
         public void Send(object message)
         {
-            foreach(var handler in GetHandlersForType(message.GetType()))
+            foreach (var handler in GetHandlersForType(message.GetType()))
                 handler.Handle(message);
         }
     }

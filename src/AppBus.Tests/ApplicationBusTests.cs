@@ -18,7 +18,7 @@ namespace AppBus.Tests
         }
 
         [Test]
-        public void Can_Get_Handlers_That_Can_Handle_Type()
+        public void Can_get_handlers_that_can_handle_type()
         {
             var type = typeof (string);
 
@@ -33,7 +33,7 @@ namespace AppBus.Tests
         }
 
         [Test]
-        public void Does_Not_Return_Handlers_That_Cannot_Handle_Type()
+        public void Does_not_return_handlers_that_cannot_handle_type()
         {
             var type = typeof (string);
 
@@ -47,7 +47,7 @@ namespace AppBus.Tests
         }
 
         [Test]
-        public void Calls_Handle_On_Handler_For_Type()
+        public void Calls_handle_on_handler_for_type()
         {
             var message = new TestMessage();
             var type = message.GetType();
@@ -63,7 +63,7 @@ namespace AppBus.Tests
         }
 
         [Test]
-        public void Does_Not_Call_Handle_On_Handlers_For_Other_Types()
+        public void Does_not_call_handle_on_handlers_for_other_types()
         {
             var message = new TestMessage();
 
@@ -78,7 +78,7 @@ namespace AppBus.Tests
         }
 
         [Test]
-        public void Calls_Handle_On_All_Handlers_For_This_Type()
+        public void Calls_handle_on_all_handlers_for_this_type()
         {
             var message = new TestMessage();
             var type = message.GetType();
@@ -101,6 +101,22 @@ namespace AppBus.Tests
             Assert.AreEqual(message, firstHandler.Message);
             Assert.AreEqual(message, secondHandler.Message);
             Assert.AreEqual(message, thirdHandler.Message);
+        }
+
+        [Test]
+        public void Adding_a_handler_that_does_not_implement_IMessageHandler_throws_an_exception()
+        {
+            try
+            {
+                var bus = mocker.Resolve<ApplicationBus>();
+                bus.Add((new object()).GetType());
+            }
+            catch (InvalidOperationException invalidOperationException)
+            {
+                Assert.AreEqual("Type Object must implement the IMessageHandler interface", invalidOperationException.Message);
+                return;
+            }
+            Assert.Fail("Did not throw an exception");
         }
 
         private IMessageHandler CreateHandler(Type type)
