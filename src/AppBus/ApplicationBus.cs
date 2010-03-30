@@ -3,9 +3,10 @@ using System.Collections.Generic;
 
 namespace AppBus
 {
-    public interface IApplicationBus : IList<Type>
+    public interface IApplicationBus
     {
         void Send(object message);
+        void Add(Type type);
     }
 
     public class ApplicationBus : List<Type>, IApplicationBus
