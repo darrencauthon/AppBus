@@ -37,8 +37,6 @@ namespace AppBus.Tests
         {
             var type = typeof (string);
 
-            var expectedResult = CreateHandler(type);
-
             var bus = mocker.Resolve<ApplicationBus>();
             bus.Add(type);
 
