@@ -3,7 +3,12 @@ using System.Collections.Generic;
 
 namespace AppBus
 {
-    public class ApplicationBus : List<Type>
+    public interface IApplicationBus : IList<Type>
+    {
+        void Send(object message);
+    }
+
+    public class ApplicationBus : List<Type>, IApplicationBus
     {
         private readonly IMessageHandlerFactory messageHandlerFactory;
 
