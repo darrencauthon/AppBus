@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace AppBus
 {
-    public class ApplicationBus: List<Type>
+    public class ApplicationBus : List<Type>
     {
         private readonly IMessageHandlerFactory messageHandlerFactory;
 
@@ -15,10 +14,12 @@ namespace AppBus
 
         public IEnumerable<IMessageHandler> GetHandlersForType(Type type)
         {
-            var handlers = from item in this
-                             select messageHandlerFactory.Create(item);
-
-            return handlers.Where(x => x.CanHandle(type));
+            foreach (var handlerType in this)
+            {
+                var handler = messageHandlerFactory.Create(handlerType);
+                if (handler.CanHandle(type))
+                    yield return handler;
+            }
         }
     }
 }
