@@ -21,5 +21,11 @@ namespace AppBus
                     yield return handler;
             }
         }
+
+        public void Send(object message)
+        {
+            foreach(var handler in GetHandlersForType(message.GetType()))
+                handler.Handle(message);
+        }
     }
 }
