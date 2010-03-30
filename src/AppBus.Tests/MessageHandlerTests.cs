@@ -21,5 +21,17 @@ namespace AppBus.Tests
             var result = handler.CanHandle(typeof (int));
             Assert.IsFalse(result);
         }
+
+        [Test]
+        public void Passing_object_to_handle_method_cast_to_T_and_passed_to_T_handle_method()
+        {
+            var mock = new Mock<MessageHandler<string>>();
+            var handler = mock.Object;
+            
+            var value = string.Empty;
+            handler.Handle((object)value);
+
+            mock.Verify(x=>x.Handle(value), Times.Once());
+        }
     }
 }

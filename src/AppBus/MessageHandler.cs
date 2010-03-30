@@ -9,6 +9,11 @@ namespace AppBus
             return type == typeof (T);
         }
 
-        public abstract void Handle(object message);
+        public void Handle(object message)
+        {
+            Handle((T)message);
+        }
+
+        public abstract void Handle(T message);
     }
 }
