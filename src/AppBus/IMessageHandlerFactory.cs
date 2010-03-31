@@ -4,6 +4,6 @@ namespace AppBus
 {
     public interface IMessageHandlerFactory
     {
-        IMessageHandler Create(Type type);
+        IMessageHandler<T> Create<T>(Type type);
     }
 }

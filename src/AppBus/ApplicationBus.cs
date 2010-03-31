@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AppBus
 {
@@ -9,7 +10,7 @@ namespace AppBus
         void Add(Type type);
     }
 
-    public class ApplicationBus : List<Type>, IApplicationBus
+    public class ApplicationBus : List<ApplicationBusRegistration>
     {
         private readonly IMessageHandlerFactory messageHandlerFactory;
 
@@ -18,37 +19,26 @@ namespace AppBus
             this.messageHandlerFactory = messageHandlerFactory;
         }
 
-        public new void Add(Type type)
+        public void Add<TMessage>(Type messageHandlerType)
         {
-            if (TypeIsNotAMessageHandler(type))
-                throw ExceptionForTypesThatAreNotMessageHandlers(type);
-            base.Add(type);
+            var registration = new ApplicationBusRegistration{
+                                                                 MessageHandlerType = messageHandlerType,
+                                                                 MessageType = typeof (TMessage),
+                                                             };
+            Add(registration);
         }
 
-        private static InvalidOperationException ExceptionForTypesThatAreNotMessageHandlers(Type type)
+        public void Send<T>(T message)
         {
-            return new InvalidOperationException(string.Format("Type {0} must implement the IMessageHandler interface", type.Name));
+            foreach (var type in this.Where(x => x.MessageType == typeof (T)))
+                messageHandlerFactory.Create<T>(type.MessageHandlerType)
+                    .Handle(message);
         }
+    }
 
-        private static bool TypeIsNotAMessageHandler(Type type)
-        {
-            return type.GetInterface(typeof (IMessageHandler).Name) == null;
-        }
-
-        public IEnumerable<IMessageHandler> GetHandlersForType(Type type)
-        {
-            foreach (var handlerType in this)
-            {
-                var handler = messageHandlerFactory.Create(handlerType);
-                if (handler.CanHandle(type))
-                    yield return handler;
-            }
-        }
-
-        public void Send(object message)
-        {
-            foreach (var handler in GetHandlersForType(message.GetType()))
-                handler.Handle(message);
-        }
+    public class ApplicationBusRegistration
+    {
+        public Type MessageType { get; set; }
+        public Type MessageHandlerType { get; set; }
     }
 }

@@ -1,10 +1,7 @@
-using System;
-
 namespace AppBus
 {
-    public interface IMessageHandler
+    public interface IMessageHandler<T>
     {
-        bool CanHandle(Type type);
-        void Handle(object message);
+        void Handle(T message);
     }
 }
