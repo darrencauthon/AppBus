@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 
 [assembly: AssemblyTitle("AppBus")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Application Bus")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("DEG")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("AppBus")]
-[assembly: AssemblyCopyright("Copyright © DEG 2010")]
+[assembly: AssemblyCopyright("Copyright © Darren Cauthon 2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -35,5 +35,5 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("1.0.2.0")]
+[assembly: AssemblyVersion("1.1.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
