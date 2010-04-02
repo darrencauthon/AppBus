@@ -7,7 +7,7 @@ namespace AppBus
     public interface IApplicationBus
     {
         void Send<T>(T message);
-        void Add<TMessage>(Type messageHandlerType);
+        void Add(Type messageHandlerType);
     }
 
     public class ApplicationBus : List<ApplicationBusRegistration>, IApplicationBus
@@ -19,19 +19,21 @@ namespace AppBus
             this.messageHandlerFactory = messageHandlerFactory;
         }
 
-        public void Add<TMessage>(Type messageHandlerType)
-        {
-            var registration = new ApplicationBusRegistration{
-                                                                 MessageHandlerType = messageHandlerType,
-                                                                 MessageType = typeof (TMessage),
-                                                             };
-            Add(registration);
-        }
-
         public void Send<T>(T message)
         {
             foreach (var type in GetTypesOfMessageHandlers<T>())
                 HandleTheMessage(type, message);
+        }
+
+        public void Add(Type messageHandlerType)
+        {
+            var messageType = GetTheMessageType(messageHandlerType);
+
+            if (TheMessageTypeImplementsIEventMessage(messageType))
+                Add(new ApplicationBusRegistration{
+                                                      MessageHandlerType = messageHandlerType,
+                                                      MessageType = messageType,
+                                                  });
         }
 
         private void HandleTheMessage<T>(Type type, T message)
@@ -54,6 +56,24 @@ namespace AppBus
         private IEnumerable<ApplicationBusRegistration> GetRegistrationsForThisType<T>()
         {
             return this.Where(x => x.MessageType == typeof (T));
+        }
+
+        private static bool TheMessageTypeImplementsIEventMessage(Type messageType)
+        {
+            return messageType.GetInterfaces()
+                .Any(x => x == typeof (IEventMessage));
+        }
+
+        private static Type GetTheMessageType(Type messageHandlerType)
+        {
+            return messageHandlerType.GetInterfaces()
+                .Where(InheritsIMessageHandler()).First()
+                .GetGenericArguments()[0];
+        }
+
+        private static Func<Type, bool> InheritsIMessageHandler()
+        {
+            return x => x.IsGenericType && x.FullName.StartsWith("AppBus.IMessageHandler`1");
         }
     }
 

@@ -20,7 +20,7 @@ namespace AppBus.Tests
         public void Add_message_handler_type_adds_an_application_bus_registration()
         {
             var applicationBus = mocker.Resolve<ApplicationBus>();
-            applicationBus.Add<Message>(typeof (MessageHandler));
+            applicationBus.Add(typeof (MessageHandler));
 
             Assert.AreEqual(1, applicationBus.Count);
         }
@@ -29,7 +29,7 @@ namespace AppBus.Tests
         public void Message_handler_type_on_new_application_bus_registration_is_type_of_handler()
         {
             var applicationBus = mocker.Resolve<ApplicationBus>();
-            applicationBus.Add<Message>(typeof (MessageHandler));
+            applicationBus.Add(typeof (MessageHandler));
 
             var registration = applicationBus.First();
             Assert.AreEqual(typeof (MessageHandler), registration.MessageHandlerType);
@@ -39,7 +39,7 @@ namespace AppBus.Tests
         public void Message_type_on_new_application_bus_registration_Is_T()
         {
             var applicationBus = mocker.Resolve<ApplicationBus>();
-            applicationBus.Add<Message>(typeof (MessageHandler));
+            applicationBus.Add(typeof (MessageHandler));
 
             var registration = applicationBus.First();
             Assert.AreEqual(typeof (Message), registration.MessageType);
@@ -54,12 +54,29 @@ namespace AppBus.Tests
             var messageHandlerFactory = new MessageHandlerFactory();
             messageHandlerFactory.SetMessageHandlerToReturn(messageHandler);
 
-            var applicationBus = new ApplicationBus(messageHandlerFactory);
-            applicationBus.Add<Message>(typeof (MessageHandler));
+            var applicationBus = new ApplicationBus(messageHandlerFactory){typeof (MessageHandler)};
 
             applicationBus.Send(message);
 
             Assert.AreSame(message, messageHandler.SentMessage);
+        }
+
+        [Test]
+        public void Throws_invalid_operation_exception_when_the_type_does_not_implement_IMessageHandler()
+        {
+            var applicationBus = mocker.Resolve<ApplicationBus>();
+
+            var exceptionHit = false;
+            try
+            {
+                applicationBus.Add(typeof (string));
+            }
+            catch (InvalidOperationException)
+            {
+                exceptionHit = true;
+            }
+
+            Assert.IsTrue(exceptionHit);
         }
     }
 
