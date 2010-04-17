@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppBus", "AppBus\AppBus.csproj", "{E85488DA-D7AC-4C1C-B0E3-AF3E7A08A918}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppBus.Tests", "AppBus.Tests\AppBus.Tests.csproj", "{49C0DE3D-E4F2-491E-B533-C5FB6FECD9F8}"
